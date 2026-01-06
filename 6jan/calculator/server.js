@@ -1,7 +1,7 @@
-const {add}=require('./calculator/add');
-const {sub}=require('./calculator/sub');
-const {mul}=require('./calculator/mul');
-const {div}=require('./calculator/div');
+const {add}=require('./add');
+const {sub}=require('./sub');
+const {mul}=require('./mul');
+const {div}=require('./div');
 
 console.log("Addition:",add(10,5));
 console.log("Subtraction:",sub(10,5));
