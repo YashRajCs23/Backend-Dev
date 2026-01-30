@@ -1,7 +1,21 @@
 import express from 'express';
 const app=express();
+import fs from 'fs';
 app.use(express.json());//middleware to parse json body
 
+//custom middleware to log request details
+//req -> request, res-> response, next-> to pass control to next middleware
+let logFun=(req,res,next)=>{
+    let log=`timestamp: ${new Date().toISOString()}, method: ${req.method}, url: ${req.originalUrl}\n`;
+    //append the log to server.log file
+    fs.appendFile('./server.log',log,(err)=>{
+        if(err) console.error(err);
+    });
+    console.log(log);
+    next();
+}
+//global middleware
+app.use(logFun); //mounting the middleware , isse har request pe ye middleware chalega and sare requests ko log karega
 let data=[
     {
         id:1,
@@ -58,7 +72,6 @@ app.post('/user',(req,res)=>{
         user:newUser
     });
 })
-
 
 app.put('/user/:id',(req,res)=>{
     let id = parseInt(req.params.id);
