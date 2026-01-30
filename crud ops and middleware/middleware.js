@@ -6,7 +6,7 @@ import path from 'path';
 let logFun=(req,res,next)=>{
     let log=`timestamp: ${new Date().toISOString()}, method: ${req.method}, url: ${req.originalUrl}\n`;
     //append the log to server.log file
-    fs.appendFileSync(path.join(__dirname,'server.log'),log);
+    fs.appendFileSync(path.join(__dirname,'./server.log'),log);
     console.log(log);
     next();
 }
