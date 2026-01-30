@@ -42,13 +42,11 @@ app.post('/user',(req,res)=>{
             message:"password must be at least 6 characters long"
         });
     }
-
     // let newUser={
     //     id:user.length+1,
     //     username,
     //     password
     // };
-
     //using rest spread operator
     let newUser={
         id:data.length+1,
@@ -79,6 +77,24 @@ app.put('/user/:id',(req,res)=>{
     });
 });
 
+app.delete('/user/:id',(req,res)=>{
+    const id = parseInt(req.params.id);
+    const userIdx=data.findIndex((ele)=>ele.id===id);
+    if(userIdx===-1){
+        return res.status(404).json({
+            message:"user not found",
+        });
+    }
+    const userDeleted=data[userIdx];
+    //deleting using splice
+    data.splice(userIdx,1);
+    //deleting using filter
+    //data=data.filter((ele)=>ele.id!==id);
+    res.status(200).json({
+        message:"user deleted",
+        user:userDeleted
+    });
+});
 app.listen(3000,()=>{
     console.log(`server is running on http://localhost:${3000}`);
 });
