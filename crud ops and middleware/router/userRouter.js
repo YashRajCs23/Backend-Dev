@@ -1,5 +1,6 @@
 import express from 'express';
-
+import { userValidation, authMiddleware } from '../middleware.js';
+app.use(express.json());//middleware to parse json body
 const router = express.Router();
 
 let logging=(req,res,next)=>{

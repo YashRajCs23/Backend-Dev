@@ -1,6 +1,6 @@
 import express from 'express';
 const app=express();
-import { logFun, userValidation, authMiddleware } from './middleware.js';
+import { logFun} from './middleware.js';
 import userRouter from './router/userRouter.js';
 import registrationRouter from './router/registrationRoute.js';
 import dashboardRouter from './router/dashboardRoute.js';
