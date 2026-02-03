@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruit List</title>
+</head>
+<body>
+    <h1>Fruit List</h1>
+    <ul>
+        <% if (!Array.isArray(fruitArr) || fruitArr.length === 0) { %>
+            <li>No fruits available</li>
+        <% } else { %>
+            <% fruitArr.forEach(fruit => { %>
+                <li><%= fruit %></li>
+            <% }) %>
+        <% } %>
+    </ul>
+    // Example with another array variable
+    <% if(arr.length>0){ %>
+        <% arr.forEach((ele) => { %>
+                <li><%= ele %></li>
+            <% }) %>
+    <% } else { %>
+        <h1>No array elements available</h1>
+    <% } %>
+</body>
+</html>
