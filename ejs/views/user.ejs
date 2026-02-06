@@ -8,7 +8,7 @@
 <body>
     <h1>User Page</h1>
     <!-- CREATE USER -->
-    <form action="http://localhost:3000/api/user&quot; method="POST">
+    <form action="/api/user" method="POST">
         <input type="text" name="name" placeholder="Enter name" required>
         <input type="number" name="age" placeholder="Enter age" required>
         <button type="submit">Submit</button>
@@ -18,7 +18,7 @@
         <% userData.forEach((ele) => { %>
             <li> <%= ele.name %> - <%= ele.age %>
             <form
-                action="http://localhost:3000/api/user/<%= ele.id %>?_method=DELETE"
+                action="/api/user/<%= ele.id %>?_method=DELETE"
                 method="POST"
                 >
                 <button type="submit">Delete</button>

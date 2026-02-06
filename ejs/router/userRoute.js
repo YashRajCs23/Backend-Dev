@@ -1,10 +1,6 @@
 import express from "express";
+import userData from "../data.js"
 const router = express.Router();
-let userData = [
-  { id: 1, name: "John Doe", age: 30 },
-  { id: 2, name: "Jane Smith", age: 25 },
-  { id: 3, name: "Mike Johnson", age: 35 },
-];
 
 router.get("/user", (req, res) => {
   res.render("user", { userData });
