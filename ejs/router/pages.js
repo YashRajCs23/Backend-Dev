@@ -12,4 +12,8 @@ router.get("/list", (req, res) => {
   res.render("list", { arr });
 });
 
+router.get("/display", (req, res) => {
+  res.render("display");
+});
+
 export default router;
