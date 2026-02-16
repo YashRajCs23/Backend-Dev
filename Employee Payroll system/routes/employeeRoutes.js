@@ -5,7 +5,9 @@ import {
   getEmployee,
   updateEmployee,
   deleteEmployee,
-  calculateSalary
+  calculateSalary,
+  getJoiningDate,
+  getDepartment
 } from "../controllers/employeeController.js";
 
 const router = express.Router();
@@ -17,5 +19,6 @@ router.put("/:id", updateEmployee);
 router.delete("/:id", deleteEmployee);
 
 router.get("/:id/payroll", calculateSalary);
-
+router.get("/:id/joiningDate", getJoiningDate);
+router.get("/:id/department", getDepartment);
 export default router;

@@ -120,3 +120,39 @@ export const calculateSalary = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getJoiningDate = async (req, res, next) => {
+  try{
+    const employee=await Employee.findById(req.params.id);
+    if(!employee){
+      return res.status(404).json({
+        success:false,
+        message:"Employee not found"
+      });
+    }
+    res.status(200).json({
+      success:true,
+      data:employee.joiningDate
+    });
+  } catch(error){
+    next(error);
+  };
+};
+
+export const getDepartment = async (req, res, next) => {
+  try{
+    const employee=await Employee.findById(req.params.id);
+    if(!employee){
+      return res.status(404).json({
+        success:false,
+        message:"Employee not found"
+      });
+    }
+    res.status(200).json({
+      success:true,
+      data:employee.department
+    });
+  } catch(error){
+    next(error);
+  };
+};
