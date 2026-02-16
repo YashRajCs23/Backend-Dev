@@ -8,9 +8,9 @@ import logger from "./middleware/logger.js";
 dotenv.config();
 
 const app = express();
-app.use(errorHandler);
 app.use(logger);
 app.use(express.json());
+app.use(errorHandler);
 
 app.use("/api/employees", employeeRoutes);
 
