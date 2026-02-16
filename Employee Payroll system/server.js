@@ -8,12 +8,12 @@ import logger from "./middleware/logger.js";
 dotenv.config();
 
 const app = express();
-app.use(express.json());
+app.use(errorHandler);
 app.use(logger);
+app.use(express.json());
 
 app.use("/api/employees", employeeRoutes);
 
-app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 
