@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= employee.name %> — Profile</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      padding: 30px;
+      color: #333;
+    }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      text-decoration: none; color: #555; font-size: 0.92rem;
+      margin-bottom: 24px; transition: color 0.2s;
+    }
+    .back-link:hover { color: #7dc142; }
+    .back-link svg { width: 16px; height: 16px; }
+
+    .profile-wrapper {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .profile-card {
+      background: #fff; border-radius: 14px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      overflow: hidden; display: flex;
+      flex-direction: column; align-items: center;
+    }
+
+    .profile-card-banner {
+      width: 100%; height: 90px;
+      background: linear-gradient(135deg, #2f4a5e, #4a8fa8);
+    }
+
+    .profile-card-body {
+      padding: 0 28px 32px;
+      display: flex; flex-direction: column;
+      align-items: center; width: 100%;
+    }
+
+    .avatar-wrap { margin-top: -44px; margin-bottom: 14px; }
+
+    .avatar-wrap img {
+      width: 88px; height: 88px;
+      border-radius: 50%; object-fit: cover;
+      border: 4px solid #fff;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+
+    .avatar-placeholder-lg {
+      width: 88px; height: 88px; border-radius: 50%;
+      background: #dde3ec; border: 4px solid #fff;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem; color: #777; font-weight: 600;
+    }
+
+    .profile-name { font-size: 1.15rem; font-weight: 700; color: #1e3a5f; text-align: center; margin-bottom: 6px; }
+    .profile-gender { font-size: 0.88rem; color: #888; margin-bottom: 18px; }
+
+    .profile-divider { width: 100%; border: none; border-top: 1px solid #f0f2f5; margin-bottom: 18px; }
+
+    .dept-heading {
+      font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.08em; color: #aaa;
+      text-transform: uppercase; align-self: flex-start; margin-bottom: 10px;
+    }
+
+    .badge-list { display: flex; flex-wrap: wrap; gap: 7px; justify-content: flex-start; width: 100%; }
+
+    .badge {
+      background: #e8f5b0; color: #4a6e0a;
+      border-radius: 20px; padding: 4px 14px;
+      font-size: 0.8rem; font-weight: 600;
+    }
+
+    .profile-actions { display: flex; gap: 10px; margin-top: 24px; width: 100%; }
+
+    .btn {
+      flex: 1; padding: 9px 0; border-radius: 8px; border: none;
+      font-size: 0.88rem; font-weight: 600; cursor: pointer;
+      text-align: center; text-decoration: none; display: inline-block;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-edit { background: #7dc142; color: #fff; }
+    .btn-edit:hover { opacity: 0.88; }
+    .btn-delete { background: #fee2e2; color: #e53e3e; border: 1px solid #fca5a5; }
+    .btn-delete:hover { background: #fca5a5; }
+
+    .details-card {
+      background: #fff; border-radius: 14px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      padding: 32px 36px;
+    }
+
+    .section-title {
+      font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: #aaa; margin-bottom: 20px;
+    }
+
+    .detail-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 24px 32px; margin-bottom: 32px;
+    }
+
+    .detail-label {
+      font-size: 0.75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.07em;
+      color: #aaa; margin-bottom: 5px;
+    }
+
+    .detail-value { font-size: 0.97rem; color: #222; font-weight: 500; }
+    .detail-value.salary-value { font-size: 1.1rem; color: #2f4a5e; font-weight: 700; }
+
+    .section-divider { border: none; border-top: 1px solid #f0f2f5; margin-bottom: 28px; }
+
+    .notes-box {
+      background: #f8fafc; border: 1px solid #e8edf2;
+      border-radius: 8px; padding: 14px 18px;
+      font-size: 0.93rem; color: #555;
+      line-height: 1.6; min-height: 70px; white-space: pre-wrap;
+    }
+    .notes-box.empty { color: #bbb; font-style: italic; }
+
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #dcfce7; color: #166534;
+      border-radius: 20px; padding: 4px 14px;
+      font-size: 0.82rem; font-weight: 600;
+    }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; }
+
+    @media (max-width: 700px) {
+      .profile-wrapper { grid-template-columns: 1fr; }
+      .detail-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <%
+    function avatarSrc(avatarValue) {
+      const map = {
+        'avatar1': '/avatar1.jpg',
+        'avatar4': '/avatar4.png',
+        'avatar2': '/avatar2.jpg',
+        'avatar3': '/avatar3.png',
+      };
+      return map[avatarValue] || null;
+    }
+    const imgSrc = avatarSrc(employee.avatar);
+  %>
+
+  <a href="/employees" class="back-link">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+    </svg>
+    Back to Employee Details
+  </a>
+
+  <div class="profile-wrapper">
+
+    <!-- LEFT CARD -->
+    <div class="profile-card">
+      <div class="profile-card-banner"></div>
+      <div class="profile-card-body">
+
+        <div class="avatar-wrap">
+          <% if (imgSrc) { %>
+            <img src="<%= imgSrc %>" alt="<%= employee.name %>"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+            <div class="avatar-placeholder-lg" style="display:none;">
+              <%= employee.name ? employee.name.charAt(0).toUpperCase() : '?' %>
+            </div>
+          <% } else { %>
+            <div class="avatar-placeholder-lg">
+              <%= employee.name ? employee.name.charAt(0).toUpperCase() : '?' %>
+            </div>
+          <% } %>
+        </div>
+
+        <div class="profile-name"><%= employee.name %></div>
+        <div class="profile-gender"><%= employee.gender %></div>
+
+        <span class="status-pill">
+          <span class="status-dot"></span>
+          Active
+        </span>
+
+        <hr class="profile-divider" style="margin-top:18px;" />
+
+        <div class="dept-heading">Departments</div>
+        <div class="badge-list">
+          <% if (employee.departments && employee.departments.length > 0) { %>
+            <% employee.departments.forEach(function(dept) { %>
+              <span class="badge"><%= dept %></span>
+            <% }); %>
+          <% } else { %>
+            <span style="color:#bbb;font-size:0.88rem;">Not assigned</span>
+          <% } %>
+        </div>
+
+        <div class="profile-actions">
+          <a href="/employees/<%= employee._id %>/edit" class="btn btn-edit">✏ Edit</a>
+          <form action="/employees/<%= employee._id %>/delete" method="POST"
+            onsubmit="return confirm('Delete <%= employee.name %>?')"
+            style="flex:1;display:flex;">
+            <button type="submit" class="btn btn-delete" style="width:100%;">🗑 Delete</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT CARD -->
+    <div class="details-card">
+      <div class="section-title">Employee Information</div>
+
+      <div class="detail-grid">
+
+        <div class="detail-item">
+          <div class="detail-label">Full Name</div>
+          <div class="detail-value"><%= employee.name || '—' %></div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">Gender</div>
+          <div class="detail-value"><%= employee.gender || '—' %></div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">Email</div>
+          <div class="detail-value"><%= employee.email || '—' %></div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">Salary</div>
+          <div class="detail-value salary-value">
+            ₹ <%= employee.salary ? Number(employee.salary).toLocaleString('en-IN') : '—' %>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">Start Date</div>
+          <div class="detail-value">
+            <% if (employee.startDay && employee.startMonth && employee.startYear) { %>
+              <%= employee.startDay %> <%= employee.startMonth %> <%= employee.startYear %>
+            <% } else { %>—<% } %>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">Department(s)</div>
+          <div class="detail-value">
+            <% if (employee.departments && employee.departments.length > 0) { %>
+              <%= employee.departments.join(', ') %>
+            <% } else { %>—<% } %>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">Employee ID</div>
+          <div class="detail-value" style="font-family:monospace;font-size:0.82rem;color:#888;">
+            <%= employee._id %>
+          </div>
+        </div>
+
+      </div>
+
+      <hr class="section-divider" />
+
+      <div class="section-title">Notes</div>
+      <div class="notes-box <%= (!employee.notes || employee.notes.trim() === '') ? 'empty' : '' %>">
+        <%= (employee.notes && employee.notes.trim() !== '') ? employee.notes : 'No notes added for this employee.' %>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

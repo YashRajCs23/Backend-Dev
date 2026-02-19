@@ -1,24 +1,39 @@
 import express from "express";
 import {
+  // View controllers
+  viewEmployees,
+  viewAddForm,
+  viewEmployee,
+  viewEditForm,
+  submitAddForm,
+  submitEditForm,
+  submitDelete,
+  // API controllers
   createEmployee,
   getEmployees,
   getEmployee,
   updateEmployee,
   deleteEmployee,
   calculateSalary,
-  getJoiningDate,
-  getDepartment
 } from "../controllers/employeeController.js";
 
 const router = express.Router();
 
-router.post("/", createEmployee);
-router.get("/", getEmployees);
-router.get("/:id", getEmployee);
-router.put("/:id", updateEmployee);
-router.delete("/:id", deleteEmployee);
+//  VIEW ROUTES  (browser / EJS pages) Base: /employees
+router.get("/",                  viewEmployees);   // List all employees
+router.get("/add",               viewAddForm);     // Show add form
+router.post("/add",              submitAddForm);   // Submit add form
+router.get("/:id/view",          viewEmployee);    // Single employee profile
+router.get("/:id/edit",          viewEditForm);    // Show edit form
+router.post("/:id/edit",         submitEditForm);  // Submit edit form
+router.post("/:id/delete",       submitDelete);    // Delete employee
 
-router.get("/:id/payroll", calculateSalary);
-router.get("/:id/joiningDate", getJoiningDate);
-router.get("/:id/department", getDepartment);
+//  API ROUTES  (JSON responses) Base: /api/employees
+router.post("/api",              createEmployee);
+router.get("/api",               getEmployees);
+router.get("/api/:id",           getEmployee);
+router.put("/api/:id",           updateEmployee);
+router.delete("/api/:id",        deleteEmployee);
+router.get("/api/:id/payroll",   calculateSalary);
+
 export default router;

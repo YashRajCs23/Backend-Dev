@@ -5,25 +5,48 @@ const employeeSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     email: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
+      trim: true,
+      lowercase: true,
     },
-    department: {
+    avatar: {
       type: String,
-      required: true
+      default: null,
     },
-    basicSalary: {
+    gender: {
+      type: String,
+      enum: ["Male", "Female"],
+      required: true,
+    },
+    departments: {
+      type: [String],
+      required: true,
+    },
+    salary: {
       type: Number,
-      required: true
+      required: true,
     },
-    joiningDate: {
-      type: Date,
-      required: true
-    }
+    startDay: {
+      type: Number,
+      required: true,
+    },
+    startMonth: {
+      type: Number,
+      required: true,
+    },
+    startYear: {
+      type: Number,
+      required: true,
+    },
+    notes: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: true }
 );

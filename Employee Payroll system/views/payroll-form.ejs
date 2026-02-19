@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Employee Payroll Form</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 30px;
+    }
+
+    .form-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 40px 50px;
+      width: 100%;
+      max-width: 720px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+
+    h2 { font-size: 1.5rem; color: #1e3a5f; margin-bottom: 30px; font-weight: 700; }
+
+    .form-group { display: flex; align-items: flex-start; margin-bottom: 24px; gap: 20px; }
+
+    .form-group label.field-label {
+      width: 130px; min-width: 130px;
+      font-size: 0.95rem; color: #444; padding-top: 8px;
+    }
+
+    .form-group .field-content { flex: 1; }
+
+    input[type="text"],
+    input[type="email"],
+    textarea, select {
+      width: 100%; padding: 9px 14px;
+      border: 1px solid #ccc; border-radius: 6px;
+      font-size: 0.95rem; color: #333; background: #fff;
+      outline: none; transition: border 0.2s;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    textarea:focus,
+    select:focus { border-color: #4a90d9; }
+
+    textarea { resize: vertical; min-height: 100px; }
+
+    /* ── Avatar ── */
+    .avatar-hint { font-size: 0.82rem; color: #aaa; margin-bottom: 12px; }
+
+    .profile-options { display: flex; gap: 18px; flex-wrap: wrap; }
+
+    .profile-option input[type="radio"] { display: none; }
+
+    .profile-option label {
+      display: flex; flex-direction: column; align-items: center;
+      opacity: 0.25;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+
+    .profile-option label.active {
+      opacity: 1;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    .profile-option label .radio-dot {
+      width: 14px; height: 14px;
+      border: 2px solid #aaa; border-radius: 50%;
+      margin-bottom: 6px; background: #fff;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .profile-option input[type="radio"]:checked + label .radio-dot {
+      border-color: #7dc142; background: #7dc142;
+    }
+
+    .profile-option label img {
+      width: 62px; height: 62px;
+      border-radius: 50%; object-fit: cover;
+      border: 3px solid #e0e0e0;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+
+    .profile-option input[type="radio"]:checked + label img {
+      border-color: #7dc142; transform: scale(1.1);
+    }
+
+    .radio-group, .checkbox-group {
+      display: flex; gap: 24px; flex-wrap: wrap; padding-top: 8px;
+    }
+
+    .radio-group label, .checkbox-group label {
+      display: flex; align-items: center;
+      gap: 6px; font-size: 0.92rem; color: #444; cursor: pointer;
+    }
+
+    input[type="radio"], input[type="checkbox"] {
+      accent-color: #4a90d9; width: 16px; height: 16px;
+    }
+
+    .date-selects { display: flex; gap: 12px; }
+    .date-selects select { flex: 1; }
+
+    .form-actions {
+      display: flex; justify-content: space-between;
+      align-items: center; margin-top: 32px;
+    }
+
+    .btn {
+      padding: 10px 32px; border: none; border-radius: 6px;
+      font-size: 0.95rem; cursor: pointer; font-weight: 500;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn:active { transform: scale(0.97); }
+    .btn-cancel { background: #dde3ec; color: #444; }
+    .btn-submit { background: #7dc142; color: #fff; }
+    .btn-reset  { background: #dde3ec; color: #444; }
+    .btn-cancel:hover { background: #c5cdd8; }
+    .btn-submit:hover { background: #6aad31; }
+    .btn-reset:hover  { background: #c5cdd8; }
+    .btn-group-right { display: flex; gap: 12px; }
+  </style>
+</head>
+<body>
+
+<div class="form-card">
+  <h2><%= employee ? 'Edit Employee' : 'Add New Employee' %></h2>
+
+  <form action="<%= employee ? '/employees/' + employee._id + '/edit' : '/employees/add' %>" method="POST">
+
+    <!-- Name -->
+    <div class="form-group">
+      <label class="field-label" for="name">Name</label>
+      <div class="field-content">
+        <input type="text" id="name" name="name"
+          value="<%= employee?.name || '' %>" placeholder="Enter full name" />
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="form-group">
+      <label class="field-label" for="email">Email</label>
+      <div class="field-content">
+        <input type="email" id="email" name="email"
+          value="<%= employee?.email || '' %>" placeholder="Enter email address" />
+      </div>
+    </div>
+
+    <!-- Gender -->
+    <div class="form-group">
+      <label class="field-label">Gender</label>
+      <div class="field-content">
+        <div class="radio-group">
+          <label>
+            <input type="radio" name="gender" value="Male"
+              <%= employee?.gender === 'Male' ? 'checked' : '' %> />
+            Male
+          </label>
+          <label>
+            <input type="radio" name="gender" value="Female"
+              <%= employee?.gender === 'Female' ? 'checked' : '' %> />
+            Female
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Image -->
+    <div class="form-group">
+      <label class="field-label">Profile image</label>
+      <div class="field-content">
+        <p class="avatar-hint" id="avatarHint">⬆ Select a gender first to unlock avatars</p>
+        <div class="profile-options">
+          <%
+            const avatars = [
+              { value: 'avatar1', src: '/avatar1.jpg', gender: 'Male',   alt: 'Male 1'   },
+              { value: 'avatar4', src: '/avatar4.png', gender: 'Male',   alt: 'Male 2'   },
+              { value: 'avatar2', src: '/avatar2.jpg', gender: 'Female', alt: 'Female 1' },
+              { value: 'avatar3', src: '/avatar3.png', gender: 'Female', alt: 'Female 2' },
+            ];
+            avatars.forEach(function(avatar) {
+              const isSelected = employee?.avatar === avatar.value ? 'checked' : '';
+          %>
+            <div class="profile-option" data-gender="<%= avatar.gender %>">
+              <input type="radio" id="<%= avatar.value %>" name="avatar"
+                value="<%= avatar.value %>" <%= isSelected %> />
+              <label for="<%= avatar.value %>">
+                <span class="radio-dot"></span>
+                <img src="<%= avatar.src %>" alt="<%= avatar.alt %>" />
+              </label>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Department -->
+    <div class="form-group">
+      <label class="field-label">Department</label>
+      <div class="field-content">
+        <div class="checkbox-group">
+          <%
+            const departments = ['HR', 'Sales', 'Finance', 'Engineer', 'Others'];
+            departments.forEach(function(dept) {
+              const checked = employee?.departments?.includes(dept) ? 'checked' : '';
+          %>
+            <label>
+              <input type="checkbox" name="department" value="<%= dept %>" <%= checked %> />
+              <%= dept %>
+            </label>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Salary -->
+    <div class="form-group">
+      <label class="field-label" for="salary">Salary</label>
+      <div class="field-content">
+        <select id="salary" name="salary" style="max-width: 260px;">
+          <option value="" disabled <%= !employee?.salary ? 'selected' : '' %>>Select Salary</option>
+          <option value="20000"  <%= employee?.salary == 20000  ? 'selected' : '' %>>₹20,000</option>
+          <option value="30000"  <%= employee?.salary == 30000  ? 'selected' : '' %>>₹30,000</option>
+          <option value="50000"  <%= employee?.salary == 50000  ? 'selected' : '' %>>₹50,000</option>
+          <option value="75000"  <%= employee?.salary == 75000  ? 'selected' : '' %>>₹75,000</option>
+          <option value="100000" <%= employee?.salary == 100000 ? 'selected' : '' %>>₹1,00,000</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Start Date -->
+    <div class="form-group">
+      <label class="field-label">Start Date</label>
+      <div class="field-content">
+        <div class="date-selects">
+
+          <select name="startDay">
+            <option value="">Day</option>
+            <% for (let d = 1; d <= 31; d++) { %>
+              <option value="<%= d %>" <%= employee?.startDay == d ? 'selected' : '' %>><%= d %></option>
+            <% } %>
+          </select>
+
+          <select name="startMonth">
+            <option value="">Month</option>
+            <%
+              const months = ['January','February','March','April','May','June',
+                              'July','August','September','October','November','December'];
+              months.forEach(function(month, i) {
+                const val = i + 1;
+            %>
+              <option value="<%= val %>" <%= employee?.startMonth == val ? 'selected' : '' %>><%= month %></option>
+            <% }); %>
+          </select>
+
+          <select name="startYear">
+            <option value="">Year</option>
+            <% for (let y = new Date().getFullYear(); y >= 2000; y--) { %>
+              <option value="<%= y %>" <%= employee?.startYear == y ? 'selected' : '' %>><%= y %></option>
+            <% } %>
+          </select>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="form-group">
+      <label class="field-label" for="notes">Notes</label>
+      <div class="field-content">
+        <textarea id="notes" name="notes"><%= employee?.notes || '' %></textarea>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <a href="/employees"><button type="button" class="btn btn-cancel">Cancel</button></a>
+      <div class="btn-group-right">
+        <button type="submit" class="btn btn-submit">Submit</button>
+        <button type="reset" class="btn btn-reset" onclick="handleReset()">Reset</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  const avatarOptions = document.querySelectorAll('.profile-option');
+  const genderRadios  = document.querySelectorAll('input[name="gender"]');
+  const avatarHint    = document.getElementById('avatarHint');
+
+  function updateAvatars(selectedGender) {
+    avatarOptions.forEach(option => {
+      const label     = option.querySelector('label');
+      const radio     = option.querySelector('input[type="radio"]');
+      const optGender = option.dataset.gender;
+
+      if (optGender === selectedGender) {
+        label.classList.add('active');
+        avatarHint.textContent = '👇 Now pick your profile picture:';
+      } else {
+        label.classList.remove('active');
+        radio.checked = false;
+      }
+    });
+  }
+
+  function handleReset() {
+    setTimeout(() => {
+      avatarOptions.forEach(opt => {
+        opt.querySelector('label').classList.remove('active');
+        opt.querySelector('input[type="radio"]').checked = false;
+      });
+      avatarHint.textContent = '⬆ Select a gender first to unlock avatars';
+    }, 10);
+  }
+
+  genderRadios.forEach(radio => {
+    radio.addEventListener('change', () => updateAvatars(radio.value));
+  });
+
+  // Restore state on edit form load
+  const preSelected = document.querySelector('input[name="gender"]:checked');
+  if (preSelected) updateAvatars(preSelected.value);
+</script>
+
+</body>
+</html>
