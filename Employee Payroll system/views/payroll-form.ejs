@@ -35,6 +35,13 @@
       font-size: 0.95rem; color: #444; padding-top: 8px;
     }
 
+    /* Required star */
+    .field-label.required::after {
+      content: ' *';
+      color: #e53e3e;
+      font-weight: 700;
+    }
+
     .form-group .field-content { flex: 1; }
 
     input[type="text"],
@@ -46,14 +53,32 @@
       outline: none; transition: border 0.2s;
     }
 
-    input[type="text"]:focus,
-    input[type="email"]:focus,
-    textarea:focus,
-    select:focus { border-color: #4a90d9; }
+    input:focus, textarea:focus, select:focus { border-color: #4a90d9; }
+
+    /* Error state */
+    input.error, select.error { border-color: #e53e3e !important; }
 
     textarea { resize: vertical; min-height: 100px; }
 
-    /* ── Avatar ── */
+    /* Inline error messages */
+    .error-msg {
+      font-size: 0.78rem;
+      color: #e53e3e;
+      margin-top: 5px;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+
+    /* Error for radio/checkbox groups */
+    .group-error {
+      font-size: 0.78rem;
+      color: #e53e3e;
+      margin-top: 6px;
+      display: none;
+    }
+    .group-error.show { display: block; }
+
+    /* Avatar */
     .avatar-hint { font-size: 0.82rem; color: #aaa; margin-bottom: 12px; }
 
     .profile-options { display: flex; gap: 18px; flex-wrap: wrap; }
@@ -62,16 +87,10 @@
 
     .profile-option label {
       display: flex; flex-direction: column; align-items: center;
-      opacity: 0.25;
-      pointer-events: none;
-      transition: opacity 0.25s;
+      opacity: 0.25; pointer-events: none; transition: opacity 0.25s;
     }
 
-    .profile-option label.active {
-      opacity: 1;
-      pointer-events: auto;
-      cursor: pointer;
-    }
+    .profile-option label.active { opacity: 1; pointer-events: auto; cursor: pointer; }
 
     .profile-option label .radio-dot {
       width: 14px; height: 14px;
@@ -85,9 +104,8 @@
     }
 
     .profile-option label img {
-      width: 62px; height: 62px;
-      border-radius: 50%; object-fit: cover;
-      border: 3px solid #e0e0e0;
+      width: 62px; height: 62px; border-radius: 50%;
+      object-fit: cover; border: 3px solid #e0e0e0;
       transition: border-color 0.2s, transform 0.15s;
     }
 
@@ -137,29 +155,33 @@
 <div class="form-card">
   <h2><%= employee ? 'Edit Employee' : 'Add New Employee' %></h2>
 
-  <form action="<%= employee ? '/employees/' + employee._id + '/edit' : '/employees/add' %>" method="POST">
+  <form id="employeeForm"
+    action="<%= employee ? '/employees/' + employee._id + '/edit' : '/employees/add' %>"
+    method="POST" novalidate>
 
     <!-- Name -->
     <div class="form-group">
-      <label class="field-label" for="name">Name</label>
+      <label class="field-label required" for="name">Name</label>
       <div class="field-content">
         <input type="text" id="name" name="name"
           value="<%= employee?.name || '' %>" placeholder="Enter full name" />
+        <div class="error-msg" id="nameErr">Please enter the employee's name.</div>
       </div>
     </div>
 
     <!-- Email -->
     <div class="form-group">
-      <label class="field-label" for="email">Email</label>
+      <label class="field-label required" for="email">Email</label>
       <div class="field-content">
         <input type="email" id="email" name="email"
           value="<%= employee?.email || '' %>" placeholder="Enter email address" />
+        <div class="error-msg" id="emailErr">Please enter a valid email address.</div>
       </div>
     </div>
 
     <!-- Gender -->
     <div class="form-group">
-      <label class="field-label">Gender</label>
+      <label class="field-label required">Gender</label>
       <div class="field-content">
         <div class="radio-group">
           <label>
@@ -173,20 +195,21 @@
             Female
           </label>
         </div>
+        <div class="group-error" id="genderErr">Please select a gender.</div>
       </div>
     </div>
 
     <!-- Profile Image -->
     <div class="form-group">
-      <label class="field-label">Profile image</label>
+      <label class="field-label required">Profile image</label>
       <div class="field-content">
         <p class="avatar-hint" id="avatarHint">⬆ Select a gender first to unlock avatars</p>
         <div class="profile-options">
           <%
             const avatars = [
               { value: 'avatar1', src: '/avatar1.jpg', gender: 'Male',   alt: 'Male 1'   },
-              { value: 'avatar4', src: '/avatar4.png', gender: 'Male',   alt: 'Male 2'   },
-              { value: 'avatar2', src: '/avatar2.jpg', gender: 'Female', alt: 'Female 1' },
+              { value: 'avatar4', src: '/avatar4.jpg', gender: 'Male',   alt: 'Male 2'   },
+              { value: 'avatar2', src: '/avatar2.png', gender: 'Female', alt: 'Female 1' },
               { value: 'avatar3', src: '/avatar3.png', gender: 'Female', alt: 'Female 2' },
             ];
             avatars.forEach(function(avatar) {
@@ -202,12 +225,13 @@
             </div>
           <% }); %>
         </div>
+        <div class="group-error" id="avatarErr">Please select a profile picture.</div>
       </div>
     </div>
 
     <!-- Department -->
     <div class="form-group">
-      <label class="field-label">Department</label>
+      <label class="field-label required">Department</label>
       <div class="field-content">
         <div class="checkbox-group">
           <%
@@ -221,12 +245,13 @@
             </label>
           <% }); %>
         </div>
+        <div class="group-error" id="deptErr">Please select at least one department.</div>
       </div>
     </div>
 
     <!-- Salary -->
     <div class="form-group">
-      <label class="field-label" for="salary">Salary</label>
+      <label class="field-label required" for="salary">Salary</label>
       <div class="field-content">
         <select id="salary" name="salary" style="max-width: 260px;">
           <option value="" disabled <%= !employee?.salary ? 'selected' : '' %>>Select Salary</option>
@@ -236,23 +261,23 @@
           <option value="75000"  <%= employee?.salary == 75000  ? 'selected' : '' %>>₹75,000</option>
           <option value="100000" <%= employee?.salary == 100000 ? 'selected' : '' %>>₹1,00,000</option>
         </select>
+        <div class="error-msg" id="salaryErr">Please select a salary.</div>
       </div>
     </div>
 
     <!-- Start Date -->
     <div class="form-group">
-      <label class="field-label">Start Date</label>
+      <label class="field-label required">Start Date</label>
       <div class="field-content">
         <div class="date-selects">
-
-          <select name="startDay">
+          <select name="startDay" id="startDay">
             <option value="">Day</option>
             <% for (let d = 1; d <= 31; d++) { %>
               <option value="<%= d %>" <%= employee?.startDay == d ? 'selected' : '' %>><%= d %></option>
             <% } %>
           </select>
 
-          <select name="startMonth">
+          <select name="startMonth" id="startMonth">
             <option value="">Month</option>
             <%
               const months = ['January','February','March','April','May','June',
@@ -264,18 +289,18 @@
             <% }); %>
           </select>
 
-          <select name="startYear">
+          <select name="startYear" id="startYear">
             <option value="">Year</option>
             <% for (let y = new Date().getFullYear(); y >= 2000; y--) { %>
               <option value="<%= y %>" <%= employee?.startYear == y ? 'selected' : '' %>><%= y %></option>
             <% } %>
           </select>
-
         </div>
+        <div class="group-error" id="dateErr">Please select a complete start date (Day, Month, Year).</div>
       </div>
     </div>
 
-    <!-- Notes -->
+    <!-- Notes (optional) -->
     <div class="form-group">
       <label class="field-label" for="notes">Notes</label>
       <div class="field-content">
@@ -296,6 +321,7 @@
 </div>
 
 <script>
+  // ── Avatar / Gender logic ──────────────────────────────
   const avatarOptions = document.querySelectorAll('.profile-option');
   const genderRadios  = document.querySelectorAll('input[name="gender"]');
   const avatarHint    = document.getElementById('avatarHint');
@@ -305,7 +331,6 @@
       const label     = option.querySelector('label');
       const radio     = option.querySelector('input[type="radio"]');
       const optGender = option.dataset.gender;
-
       if (optGender === selectedGender) {
         label.classList.add('active');
         avatarHint.textContent = '👇 Now pick your profile picture:';
@@ -323,16 +348,118 @@
         opt.querySelector('input[type="radio"]').checked = false;
       });
       avatarHint.textContent = '⬆ Select a gender first to unlock avatars';
+      // Also clear all error states
+      document.querySelectorAll('.error-msg, .group-error').forEach(e => e.classList.remove('show'));
+      document.querySelectorAll('.error').forEach(e => e.classList.remove('error'));
     }, 10);
   }
 
   genderRadios.forEach(radio => {
-    radio.addEventListener('change', () => updateAvatars(radio.value));
+    radio.addEventListener('change', () => {
+      updateAvatars(radio.value);
+      showError('genderErr', false);
+    });
   });
 
-  // Restore state on edit form load
   const preSelected = document.querySelector('input[name="gender"]:checked');
   if (preSelected) updateAvatars(preSelected.value);
+
+  // ── Validation helpers ─────────────────────────────────
+  function showError(id, show) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('show', show);
+  }
+
+  function markField(id, hasError) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('error', hasError);
+  }
+
+  // ── Form submit validation ─────────────────────────────
+  document.getElementById('employeeForm').addEventListener('submit', function(e) {
+    let valid = true;
+
+    // Name
+    const name = document.getElementById('name');
+    const nameOk = name.value.trim() !== '';
+    markField('name', !nameOk);
+    showError('nameErr', !nameOk);
+    if (!nameOk) valid = false;
+
+    // Email
+    const email = document.getElementById('email');
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+    markField('email', !emailOk);
+    showError('emailErr', !emailOk);
+    if (!emailOk) valid = false;
+
+    // Gender
+    const genderSelected = document.querySelector('input[name="gender"]:checked');
+    showError('genderErr', !genderSelected);
+    if (!genderSelected) valid = false;
+
+    // Avatar
+    const avatarSelected = document.querySelector('input[name="avatar"]:checked');
+    showError('avatarErr', !avatarSelected);
+    if (!avatarSelected) valid = false;
+
+    // Department (at least one)
+    const deptSelected = document.querySelector('input[name="department"]:checked');
+    showError('deptErr', !deptSelected);
+    if (!deptSelected) valid = false;
+
+    // Salary
+    const salary = document.getElementById('salary');
+    const salaryOk = salary.value !== '';
+    markField('salary', !salaryOk);
+    showError('salaryErr', !salaryOk);
+    if (!salaryOk) valid = false;
+
+    // Start Date — all three must be selected
+    const day   = document.getElementById('startDay').value;
+    const month = document.getElementById('startMonth').value;
+    const year  = document.getElementById('startYear').value;
+    const dateOk = day !== '' && month !== '' && year !== '';
+    if (!dateOk) {
+      document.getElementById('startDay').classList.toggle('error', day === '');
+      document.getElementById('startMonth').classList.toggle('error', month === '');
+      document.getElementById('startYear').classList.toggle('error', year === '');
+    } else {
+      ['startDay','startMonth','startYear'].forEach(id => document.getElementById(id).classList.remove('error'));
+    }
+    showError('dateErr', !dateOk);
+    if (!dateOk) valid = false;
+
+    if (!valid) {
+      e.preventDefault(); // stop form submit
+      // Scroll to first error
+      const firstError = document.querySelector('.error-msg.show, .group-error.show');
+      if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+
+  // ── Live clear errors on input ─────────────────────────
+  document.getElementById('name').addEventListener('input', function() {
+    markField('name', false); showError('nameErr', false);
+  });
+  document.getElementById('email').addEventListener('input', function() {
+    markField('email', false); showError('emailErr', false);
+  });
+  document.getElementById('salary').addEventListener('change', function() {
+    markField('salary', false); showError('salaryErr', false);
+  });
+  document.querySelectorAll('input[name="avatar"]').forEach(r => {
+    r.addEventListener('change', () => showError('avatarErr', false));
+  });
+  document.querySelectorAll('input[name="department"]').forEach(c => {
+    c.addEventListener('change', () => showError('deptErr', false));
+  });
+  ['startDay','startMonth','startYear'].forEach(id => {
+    document.getElementById(id).addEventListener('change', function() {
+      this.classList.remove('error');
+      showError('dateErr', false);
+    });
+  });
 </script>
 
 </body>
